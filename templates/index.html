@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metinden Görsele AI</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      margin-bottom: 30px;
+      width: 90%;
+      max-width: 600px;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    textarea, select {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 10px;
+      resize: none;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 25px;
+      background: #00c9ff;
+      background: linear-gradient(to right, #92fe9d, #00c9ff);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .output-container {
+      text-align: center;
+      animation: slideIn 1s ease forwards;
+    }
+
+    img {
+      max-width: 90%;
+      border-radius: 15px;
+      margin-top: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatBox {
+      0% { transform: translateY(100vh) rotate(0deg); }
+      100% { transform: translateY(-100vh) rotate(360deg); }
+    }
+
+    .floating-boxes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .floating-boxes div {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      animation: floatBox 10s linear infinite;
+    }
+
+    .loading-bar {
+      width: 80%;
+      max-width: 400px;
+      height: 20px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      margin-top: 20px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .loading-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #00c9ff, #92fe9d);
+      animation: loadGrow 5s linear forwards;
+    }
+
+    @keyframes loadGrow {
+      0% { width: 0%; }
+      10% { width: 10%; }
+      25% { width: 25%; }
+      50% { width: 50%; }
+      75% { width: 75%; }
+      100% { width: 100%; }
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 10px;
+      right: 20px;
+      font-size: 0.9em;
+      color: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-boxes">
+    <div style="left: 10%; animation-delay: 0s;"></div>
+    <div style="left: 30%; animation-delay: 2s;"></div>
+    <div style="left: 50%; animation-delay: 4s;"></div>
+    <div style="left: 70%; animation-delay: 6s;"></div>
+    <div style="left: 90%; animation-delay: 8s;"></div>
+  </div>
+
+  <h1>✨ Metinden Görsele Yapay Zeka</h1>
+  <form method="POST">
+    <textarea name="text" placeholder="Bir sahne yaz (örn: Yağmurda yürüyen bir samuray)" required></textarea>
+    <select name="style">
+      <option value="realistic">Gerçekçi</option>
+      <option value="anime">Anime</option>
+      <option value="cinematic">Sinematik</option>
+      <option value="cyberpunk">Cyberpunk</option>
+    </select>
+    <select name="resolution">
+      <option value="512">512x512</option>
+      <option value="768">768x768</option>
+      <option value="1024">1024x1024</option>
+    </select>
+    <button type="submit" onclick="showLoading()">✨ Görseli Oluştur</button>
+  </form>
+
+  <div class="loading-bar" id="loadingBar">
+    <div class="loading-fill"></div>
+  </div>
+
+  {% if image_path %}
+  <div class="output-container">
+    <h3>🧠 Üretilen İngilizce Prompt:</h3>
+    <p>{{ prompt }}</p>
+    <img src="{{ image_path }}" alt="Oluşturulan Görsel">
+    <br><br>
+    <a href="/download" style="color: #fff; text-decoration: underline;">📥 Görseli indir</a>
+  </div>
+  {% endif %}
+
+  <div class="footer">İbrahim Diken ©</div>
+
+  <script>
+    function showLoading() {
+      document.getElementById('loadingBar').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
