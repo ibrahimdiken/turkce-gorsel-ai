@@ -62,6 +62,3 @@ Proje herkese açıktır. PR gönder, issue aç, destek ol 🙌
 3. Commit et → Ve proje daha da profesyonel gözüksün! 💼
 
 ---
-
-İstersen şimdi sana Medium yazısı + LinkedIn paylaşımı + Tanıtım Tweet'i de yazabilirim.  
-Sadece “devam” de 💥
